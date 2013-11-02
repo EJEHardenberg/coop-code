@@ -1,7 +1,8 @@
 html, body{
 	
-	background-color: #eeeeee;
+	background-color: #333;
 	height: 100%;
+	color: #ffffff;
 	
 }
 header,section{	
@@ -10,17 +11,17 @@ header,section{
 }
 
 .jumbotron {
-	background-image: linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -o-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -moz-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -webkit-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -ms-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
+	background-image: linear-gradient(bottom, rgb(181,46,41) 90%, rgb(168,43,38) 65%);
+background-image: -o-linear-gradient(bottom, rgb(181,46,41) 90%, rgb(168,43,38) 65%);
+background-image: -moz-linear-gradient(bottom, rgb(181,46,41) 90%, rgb(168,43,38) 65%);
+background-image: -webkit-linear-gradient(bottom, rgb(181,46,41) 90%, rgb(168,43,38) 65%);
+background-image: -ms-linear-gradient(bottom, rgb(181,46,41) 90%, rgb(168,43,38) 65%);
 
 background-image: -webkit-gradient(
 	linear,
 	left bottom,
 	left top,
-	color-stop(0.25, rgb(181,46,41)),
+	color-stop(0.9, rgb(181,46,41)),
 	color-stop(0.65, rgb(168,43,38))
 );
 
@@ -43,15 +44,17 @@ background-image: -webkit-gradient(
 	width: 1300px;
 }
 
-textarea {
+pre {
 	margin-top: 10px;
 }
 
-#question_1 {
+#ready_1 {
+	margin: 1.5em;
 	padding: 5px;
 }
 
-#question_2 {
+#ready_2 {
+	margin: 1.5em;
 	padding: 5px;
 }
 
