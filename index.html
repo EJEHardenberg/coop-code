@@ -28,14 +28,14 @@
 			<div class='col-xs-6'>
 				<h2>Player One</h2>
 				<div id="question_1"></div>
-				<button type='button' class='btn btn-deafult'>Ready</button>
+				<button id="ready_1" type='button' class='btn btn-deafult'>Ready</button>
 				<textarea class='form-control' rows='4' id="input_1"></textarea>
 				<div id="errors_1"></div>
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
 				<div id="question_2"></div>
-				<button type='button' class='btn btn-default'>Ready</button>
+				<button id="ready_2" type='button' class='btn btn-default'>Ready</button>
 				<textarea class='form-control' rows='4' id="input_2"></textarea>
 				<div id="errors_2"></div>
 			</div>
@@ -94,6 +94,15 @@
 				var player = 0;
 				var channel = 'colabcode';
 				var question = Math.floor(Math.random() * (questions.length  + 1)) ;
+				var ready_1 = false;
+				var ready_2 = false;
+
+				document.getElementById('ready_1').onclick = function(){
+					ready_1 = true;
+				};
+				document.getElementById('ready_2').onclick = function(){
+					ready_2 = true;
+				};
 			
 				var pubnub = PUBNUB.init({
 		     		publish_key: 'demo',
@@ -124,6 +133,8 @@
 							document.getElementById('input_1').value = obj.p1;
 						if(obj.sender == 2)
 							document.getElementById('input_2').value = obj.p2;
+						ready_1 = obj.ready_1;
+						ready_2 = obj.ready_2;
 					},
 					presence : function(obj){
 						pubnub.history({
@@ -141,7 +152,7 @@
 					}
 				});
 				function page_message (){
-					return {question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+					return {ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 				}
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
