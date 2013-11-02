@@ -43,15 +43,15 @@ header,section{
 	width: 1300px;
 }
 
-textarea {
+pre {
 	margin-top: 10px;
 }
 
-#question_1 {
+#ready_1 {
 	padding: 5px;
 }
 
-#question_2 {
+#ready_2 {
 	padding: 5px;
 }
 
