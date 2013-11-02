@@ -43,14 +43,50 @@
 				<h2>Player One</h2>
 				<div id="question_1">Write a function to subtract one from a number</div>
 				<button>Ready</button>
-				<textarea></textarea>
+				<textarea id="input_1"></textarea>
 			</div>
 			<div>
 				<h2>Player Two</h2>
 				<div id="question_2">Write a function to multiply a number by 2</div>
 				<button>Ready</button>
-				<textarea></textarea>
+				<textarea id="input_2"></textarea>
 			</div>
 		</section>
 	</body>
+	<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+		<script>
+			(function(){
+				
+				var playerTwoText = document.getElementById('input_2');
+				var channel = 'colabcode';
+			
+				var pubnub = PUBNUB.init({
+		     		publish_key: 'demo',
+	     			subscribe_key: 'demo'
+	 			});	
+				pubnub.subscribe({
+					channel : channel,
+					message : function(stuff){
+						console.log(stuff);
+					},
+					callback : function(text) { 
+						document.getElementById('input_1').innerHTML = text.p1;
+						document.getElementById('input_2').innerHTML = text.p1;
+					},
+				});
+				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
+					(e.keyCode || e.charCode) === 13 && pubnub.publish({
+						channel : channel, 
+						message : {p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+					});	
+				} );
+				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
+					(e.keyCode || e.charCode) === 13 && pubnub.publish({
+						channel : channel, 
+						message : {p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+					});	
+				} );
+			})();
+	</script>
+
 </html>
