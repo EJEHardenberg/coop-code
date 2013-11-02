@@ -27,6 +27,7 @@ background-image: -webkit-gradient(
 
 	
 	color: #eee;
+	text-shadow: 1px 1px 1px 1px #000;
 }
 
 /* Wrapper for page content to push down footer */
