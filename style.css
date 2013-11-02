@@ -11,18 +11,18 @@ header,section{
 
 .jumbotron {
 	background-image: linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -o-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -moz-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -webkit-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
-background-image: -ms-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
+	background-image: -o-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
+	background-image: -moz-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
+	background-image: -webkit-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
+	background-image: -ms-linear-gradient(bottom, rgb(181,46,41) 25%, rgb(168,43,38) 65%);
 
-background-image: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0.25, rgb(181,46,41)),
-	color-stop(0.65, rgb(168,43,38))
-);
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.25, rgb(181,46,41)),
+		color-stop(0.65, rgb(168,43,38))
+	);
 
 	
 	color: #eee;
