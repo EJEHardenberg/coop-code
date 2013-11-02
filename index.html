@@ -70,8 +70,9 @@
 						console.log(stuff);
 					},
 					callback : function(text) { 
+						console.log(text);
 						document.getElementById('input_1').innerHTML = text.p1;
-						document.getElementById('input_2').innerHTML = text.p1;
+						document.getElementById('input_2').innerHTML = text.p2;
 					},
 				});
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
