@@ -4,6 +4,7 @@
 		<title>Cooperative Coder</title>
 		<link rel="stylesheet" type="text/css" href="css/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="prism.css">
 
 	</head>
 	<body>
@@ -29,14 +30,14 @@
 				<h2>Player One</h2>
 				<div id="question_1"></div>
 				<button id="ready_1" type='button' class='btn btn-deafult'>Ready</button>
-				<textarea class='form-control' rows='4' id="input_1"></textarea>
+				<code class="language-js"><textarea class='form-control' rows='4' id="input_1"></textarea></code>
 				<div id="errors_1"></div>
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
 				<div id="question_2"></div>
 				<button id="ready_2" type='button' class='btn btn-default'>Ready</button>
-				<textarea class='form-control' rows='4' id="input_2"></textarea>
+				<code class="language-js"><textarea class='form-control' rows='4' id="input_2"></textarea></code>
 				<div id="errors_2"></div>
 			</div>
 		</section>
@@ -47,9 +48,11 @@
 			<div class='container'></div>
 		</div>
 	</body>
-	<script src=http://cdn.pubnub.com/pubnub.min.js></script>
+	<script src="http://cdn.pubnub.com/pubnub.min.js"></script>
+	<script src="./prism.js" type="text/javascript" charset="utf-8"></script>
 		<script>
 			(function(){
+
 				var questions = [
 					{ 	question_1 : "Write a function to subtract one from a number", 
 					 	placeholder_1 : "function subtract(num){}",
