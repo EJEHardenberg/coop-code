@@ -39,38 +39,65 @@
 		</section>
 	</div> <!--container -->
 	</body>
-	<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+	<script src=http://cdn.pubnub.com/pubnub.min.js></script>
 		<script>
 			(function(){
 				
-				var playerTwoText = document.getElementById('input_2');
+				var id = Math.random().toString(36).substring(7);
+				var player = 0;
 				var channel = 'colabcode';
 			
 				var pubnub = PUBNUB.init({
 		     		publish_key: 'demo',
-	     			subscribe_key: 'demo'
+	     			subscribe_key: 'demo',
+	     			uuid: id
 	 			});	
+	 			pubnub.here_now({
+	 				channel : channel,
+	 				callback : function(m){
+	 					console.log(m);
+	 					if(m.occupancy % 2 == 0){
+	 						player = 1;
+	 						document.getElementById('input_2').setAttribute('readonly','readonly');
+	 					}else{
+	 						player = 2;
+	 						document.getElementById('input_1').setAttribute('readonly','readonly');
+	 					}
+	 				}
+	 			});
 				pubnub.subscribe({
 					channel : channel,
-					message : function(stuff){
-						console.log(stuff);
-					},
-					callback : function(text) { 
+					message : function(text){
 						console.log(text);
-						document.getElementById('input_1').innerHTML = text.p1;
-						document.getElementById('input_2').innerHTML = text.p2;
 					},
+					callback : function(obj) { 
+						console.log(obj);
+						if(obj.sender == 1)
+							document.getElementById('input_1').value = obj.p1;
+						if(obj.sender == 2)
+							document.getElementById('input_2').value = obj.p2;
+					},
+					presence : function(obj){
+						pubnub.history({
+     						channel: channel,
+     						count: 1,
+     						callback: function(m){
+     							document.getElementById('input_1').value = m[0][0].p1;
+     							document.getElementById('input_2').value = m[0][0].p2;
+     						}
+ 						});
+					}
 				});
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : {sender: player ,p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 					});	
 				} );
 				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : {sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 					});	
 				} );
 			})();
