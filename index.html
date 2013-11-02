@@ -4,6 +4,7 @@
 		<title>Cooperative Coder</title>
 		<link rel="stylesheet" type="text/css" href="css/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="prism.css">
 
 	</head>
 	<body>
@@ -32,15 +33,15 @@
 			<div class='col-xs-6'>
 				<h2>Player One</h2>
 				<div id="question_1"></div>
-				<button type='button' class='btn btn-primary'>Ready?</button>
-				<textarea class='form-control' rows='4' id="input_1"></textarea>
+				<button id="ready_1" type='button' class='btn btn-deafult'>Ready</button>
+				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_1"></textarea></code></pre>
 				<div id="errors_1"></div>
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
 				<div id="question_2"></div>
-				<button type='button' class='btn btn-primary'>Ready?</button>
-				<textarea class='form-control' rows='4' id="input_2"></textarea>
+				<button id="ready_2" type='button' class='btn btn-default'>Ready</button>
+				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_2"></textarea></code></pre>
 				<div id="errors_2"></div>
 			</div>
 		</section>
@@ -53,9 +54,11 @@
 			</div>
 		</div>
 	</body>
-	<script src=http://cdn.pubnub.com/pubnub.min.js></script>
+	<script src="http://cdn.pubnub.com/pubnub.min.js"></script>
+	<script src="./prism.js" type="text/javascript" charset="utf-8"></script>
 		<script>
 			(function(){
+
 				var questions = [
 					{ 	question_1 : "Write a function to subtract one from a number", 
 					 	placeholder_1 : "function subtract(num){}",
@@ -93,18 +96,44 @@
 					 }
 				];
 
-				function setQuestion(index){
-					console.log(questions);
-					document.getElementById('question_1').textContent = questions[index].question_1;
-					document.getElementById('question_2').textContent = questions[index].question_2;
-					document.getElementById('input_1').value = questions[index].placeholder_1;
-					document.getElementById('input_2').value = questions[index].placeholder_2;
-				}
-
 				var id = Math.random().toString(36).substring(7);
 				var player = 0;
 				var channel = 'colabcode';
-				var question = Math.floor(Math.random() * (questions.length  + 1)) ;
+				var question = Math.floor(Math.random() * (questions.length-1)) ;
+				var ready_1 = false;
+				var ready_2 = false;
+
+				function setQuestion(q){
+					question = q;
+					document.getElementById('question_1').textContent = questions[question].question_1;
+					document.getElementById('question_2').textContent = questions[question].question_2;
+					document.getElementById('input_1').value = questions[question].placeholder_1;
+					document.getElementById('input_2').value = questions[question].placeholder_2;
+				}
+
+
+				document.getElementById('ready_1').onclick = function(){
+					ready_1 = true;
+					obj = page_message();
+					obj.sync = true;
+					pubnub.publish({
+						channel : channel,
+						message : obj
+					});
+				};
+				document.getElementById('ready_2').onclick = function(){
+					ready_2 = true;
+					pubnub.publish({
+						channel : channel,
+						message : page_message()
+					});
+					obj = page_message();
+					obj.sync = true;
+					pubnub.publish({
+						channel : channel,
+						message : obj
+					});
+				};
 			
 				var pubnub = PUBNUB.init({
 		     		publish_key: 'demo',
@@ -131,28 +160,26 @@
 					},
 					callback : function(obj) { 
 						console.log(obj);
-						if(obj.sender == 1)
+						if(obj.sender == 1){
 							document.getElementById('input_1').value = obj.p1;
-						if(obj.sender == 2)
+							ready_1 = obj.ready_1;
+						}
+						if(obj.sender == 2){
 							document.getElementById('input_2').value = obj.p2;
+							ready_2 = obj.ready_2;
+						}
+						if(obj.sync){
+							console.log("syncing question");
+							setQuestion(obj.question);
+						}
 					},
 					presence : function(obj){
-						pubnub.history({
-     						channel: channel,
-     						count: 1,
-     						callback: function(m){
-     							console.log(obj);
-     							/* This should only really be done if we begin game or something */
-     							document.getElementById('input_1').value = m[0][0].p1;
-     							document.getElementById('input_2').value = m[0][0].p2;
-     							/* Set Question */
-     							setQuestion(m[0][0].question);
-     						}
- 						});
+						/* Notify Users that they have a partner here */
+
 					}
 				});
 				function page_message (){
-					return {question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+					return {ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 				}
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
