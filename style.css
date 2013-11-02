@@ -9,7 +9,7 @@ html, body{
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019', endColorstr='#cf0404',GradientType=0 ); /* IE6-9 */
 
 	height: 100%;
-	color: #000000;
+	
 }
 
 /* Wrapper for page content to push down footer */
@@ -25,7 +25,7 @@ html, body{
 /* Set the fixed height of the footer here */
 #footer {
   height: 60px;
-  background-color: #f5f5f5;
+  background-color: #C7C1BF;
 }
 
 header,section{	
