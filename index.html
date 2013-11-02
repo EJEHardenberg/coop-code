@@ -82,26 +82,43 @@
 					 }
 				];
 
-				function setQuestion(index){
-					console.log(questions);
-					document.getElementById('question_1').textContent = questions[index].question_1;
-					document.getElementById('question_2').textContent = questions[index].question_2;
-					document.getElementById('input_1').value = questions[index].placeholder_1;
-					document.getElementById('input_2').value = questions[index].placeholder_2;
-				}
-
 				var id = Math.random().toString(36).substring(7);
 				var player = 0;
 				var channel = 'colabcode';
-				var question = Math.floor(Math.random() * (questions.length  + 1)) ;
+				var question = Math.floor(Math.random() * (questions.length-1)) ;
 				var ready_1 = false;
 				var ready_2 = false;
 
+				function setQuestion(q){
+					question = q;
+					document.getElementById('question_1').textContent = questions[question].question_1;
+					document.getElementById('question_2').textContent = questions[question].question_2;
+					document.getElementById('input_1').value = questions[question].placeholder_1;
+					document.getElementById('input_2').value = questions[question].placeholder_2;
+				}
+
+
 				document.getElementById('ready_1').onclick = function(){
 					ready_1 = true;
+					obj = page_message();
+					obj.sync = true;
+					pubnub.publish({
+						channel : channel,
+						message : obj
+					});
 				};
 				document.getElementById('ready_2').onclick = function(){
 					ready_2 = true;
+					pubnub.publish({
+						channel : channel,
+						message : page_message()
+					});
+					obj = page_message();
+					obj.sync = true;
+					pubnub.publish({
+						channel : channel,
+						message : obj
+					});
 				};
 			
 				var pubnub = PUBNUB.init({
@@ -129,26 +146,22 @@
 					},
 					callback : function(obj) { 
 						console.log(obj);
-						if(obj.sender == 1)
+						if(obj.sender == 1){
 							document.getElementById('input_1').value = obj.p1;
-						if(obj.sender == 2)
+							ready_1 = obj.ready_1;
+						}
+						if(obj.sender == 2){
 							document.getElementById('input_2').value = obj.p2;
-						ready_1 = obj.ready_1;
-						ready_2 = obj.ready_2;
+							ready_2 = obj.ready_2;
+						}
+						if(obj.sync){
+							console.log("syncing question");
+							setQuestion(obj.question);
+						}
 					},
 					presence : function(obj){
-						pubnub.history({
-     						channel: channel,
-     						count: 1,
-     						callback: function(m){
-     							console.log(obj);
-     							/* This should only really be done if we begin game or something */
-     							document.getElementById('input_1').value = m[0][0].p1;
-     							document.getElementById('input_2').value = m[0][0].p2;
-     							/* Set Question */
-     							setQuestion(m[0][0].question);
-     						}
- 						});
+						/* Notify Users that they have a partner here */
+
 					}
 				});
 				function page_message (){
