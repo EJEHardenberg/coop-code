@@ -60,35 +60,22 @@
 
 				var questions = [
 					{ 	question_1 : "Write a function to subtract one from a number", 
-					 	placeholder_1 : "function subtract(num){}",
+					 	placeholder_1_s : "function subtract(num){",
+					 	prompt_1 : "//Write the inside of a function that has an argument of num",
+					 	placeholder_1_e : "}",
 					 	question_2 : "Write a function to multiply a number by 2",
-					 	placeholder_2 : "function multiply(num){}", 
-					 	validate : function(){
+					 	placeholder_2_s : "function multiply(num){", 
+					 	prompt_2 : "//Write the inside of a function that has an argument of num",
+					 	placeholder_2_e : "}",
+					 	validate : function(func1,func2){
 					 		var inputs = [1,2,3,4,5,6]
 					 		var outputs = []
 					 		for (var i = inputs.length - 1; i >= 0; i--) {
-					 			outputs.push( multiply(subtract(inputs[i])) );						 			
+					 			outputs.unshift( func2(func1(inputs[i])) );						 			
 					 		}
 					 		valid = true;
 					 		for (var i = outputs.length - 1; i >= 0; i--) {
-					 			valid = valid && outputs[i] == (inputs[i]-1)*2;
-					 		}
-					 		return valid;
-					 	}
-					 },
-					 { 	question_1 : "Write a function to add one from a number", 
-					 	placeholder_1 : "function add(num){//Write code here...}",
-					 	question_2 : "Write a function to multiply a number by 4",
-					 	placeholder_2 : "function multiply(num){//Write code here...}", 
-					 	validate : function(){
-					 		var inputs = [1,2,3,4,5,6]
-					 		var outputs = []
-					 		for (var i = inputs.length - 1; i >= 0; i--) {
-					 			outputs.push( multiply(add(inputs[i])) );						 			
-					 		}
-					 		valid = true;
-					 		for (var i = outputs.length - 1; i >= 0; i--) {
-					 			valid = valid && outputs[i] == (inputs[i]+1)*4;
+					 			valid = valid && outputs[i] == ((inputs[i]-1)*2);
 					 		}
 					 		return valid;
 					 	}
@@ -106,9 +93,52 @@
 					question = q;
 					document.getElementById('question_1').textContent = questions[question].question_1;
 					document.getElementById('question_2').textContent = questions[question].question_2;
-					document.getElementById('input_1').value = questions[question].placeholder_1;
-					document.getElementById('input_2').value = questions[question].placeholder_2;
+					document.getElementById('input_1').value = questions[question].prompt_1;
+					document.getElementById('input_2').value = questions[question].prompt_2;
 				}
+
+				window.getFunctionFromString = function(string)
+				{
+				    var scope = window;
+				    var scopeSplit = string.split('.');
+				    for (i = 0; i < scopeSplit.length - 1; i++)
+				    {
+				        scope = scope[scopeSplit[i]];
+
+				        if (scope == undefined) return;
+				    }
+
+				    return scope[scopeSplit[scopeSplit.length - 1]];
+				}
+
+				function evalAnswers(){
+					var oneAns = document.getElementById('input_1').value;
+					var twoAns = document.getElementById('input_2').value;
+					var p1Func;
+					var p2Func;
+					var before1 = questions[question].placeholder_1_s;
+					var before2 = questions[question].placeholder_2_s;
+					var end1 = questions[question].placeholder_1_e;
+					var end2 = questions[question].placeholder_2_e;
+					try{
+						p1Func = new Function('num', oneAns);
+						eval(before1 +  oneAns + end1);
+					}catch(err){
+						console.log(err);
+						document.getElementById('errors_1').textContent = err.message						
+					}
+					try{
+						p2Func = new Function('num',twoAns);
+						eval(before2 +  twoAns +end2);
+					}catch(err){
+						console.log(err);
+						document.getElementById('errors_2').textContent = err.message						
+					}
+					var valid = questions[question].validate(p1Func,p2Func);
+					console.log(valid);
+				}
+
+
 
 
 				document.getElementById('ready_1').onclick = function(){
@@ -199,6 +229,7 @@
 						channel : channel,
 						message : page_message()
 					});
+					evalAnswers();
 				},10000);
 
 			})();
