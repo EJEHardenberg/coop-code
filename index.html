@@ -33,14 +33,18 @@
 				<h2>Player One</h2>
 				<div id="question_1"></div>
 				<button id="ready_1" type='button' class='btn btn-primary'>Ready!</button>
+				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_1_s"></textarea></code></pre>
 				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_1"></textarea></code></pre>
+				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_1_e"></textarea></code></pre>
 				<div id="errors_1"></div>
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
 				<div id="question_2"></div>
 				<button id="ready_2" type='button' class='btn btn-primary'>Ready!</button>
+				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_2_s"></textarea></code></pre>
 				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_2"></textarea></code></pre>
+				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_2_e"></textarea></code></pre>
 				<div id="errors_2"></div>
 			</div>
 		</section>
@@ -93,8 +97,12 @@
 					question = q;
 					document.getElementById('question_1').textContent = questions[question].question_1;
 					document.getElementById('question_2').textContent = questions[question].question_2;
+					document.getElementById('input_1_s').value = questions[question].placeholder_1_s;
+					document.getElementById('input_2_s').value = questions[question].placeholder_2_s;
 					document.getElementById('input_1').value = questions[question].prompt_1;
 					document.getElementById('input_2').value = questions[question].prompt_2;
+					document.getElementById('input_1_e').value = questions[question].placeholder_1_e;
+					document.getElementById('input_2_e').value = questions[question].placeholder_2_e;
 				}
 
 				window.getFunctionFromString = function(string)
