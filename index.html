@@ -2,9 +2,12 @@
 <html>
 	<head>
 		<title>Cooperative Coder</title>
+		<link rel="stylesheet" type="text/css" href="css/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+
 	</head>
 	<body>
+		<div class='container'>
 		<header>
 			<h1>The Cooperative Code Challenge</h1>
 			<p>
@@ -22,16 +25,17 @@
 			<div>
 				<h2>Player One</h2>
 				<div id="question_1">Write a function to subtract one from a number</div>
-				<button>Ready</button>
+				<button type='button' class='btn btn-deafult'>Ready</button>
 				<textarea id="input_1"></textarea>
 			</div>
 			<div>
 				<h2>Player Two</h2>
 				<div id="question_2">Write a function to multiply a number by 2</div>
-				<button>Ready</button>
+				<button type='button' class='btn btn-default'>Ready</button>
 				<textarea id="input_2"></textarea>
 			</div>
 		</section>
+	</div> <!--container -->
 	</body>
 	<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
 		<script>
