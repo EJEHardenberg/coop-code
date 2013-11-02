@@ -19,6 +19,7 @@ header,section{
 	background: linear-gradient(to bottom,  #ff3019 0%,#cf0404 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019', endColorstr='#cf0404',GradientType=0 ); /* IE6-9 */
 	
+	color: #eee;
 }
 
 /* Wrapper for page content to push down footer */
