@@ -9,8 +9,10 @@
 	</head>
 	<body>
 		<div id='wrap'>
-		<div class='container'>
-		<header class='page-header'>
+		
+		
+		<div class='jumbotron'>
+			<div class='container'>
 			<h1>The Cooperative Code Challenge</h1>
 			<p>
 				Veggies sunt bona vobis, proinde vos postulo esse magis spinach watercress plantain water spinach okra broccoli bok choy corn pea lentil black-eyed pea garlic.
@@ -18,8 +20,10 @@
 			<p>
 				Beetroot corn cabbage melon scallion burdock chickweed turnip groundnut fennel tigernut garlic swiss chard avocado squash mustard amaranth. Gram dandelion pea sprouts komatsuna maize amaranth bunya nuts plantain jícama water chestnut sea lettuce quandong rock melon courgette black-eyed pea kale. Broccoli rabe beet greens napa cabbage scallion fava bean chard celtuce lotus root caulie arugula beetroot bok choy zucchini kohlrabi garbanzo leek bunya nuts brussels sprout.
 			</p>
-		</header>
+			</div> <!-- jumbotron container -->
+		</div><!--jumbotron -->
 
+		<div class='container'>
 		<section>
 			<h2>The result</h2>
 			<div id="result"></div>
@@ -45,7 +49,9 @@
 		
 	</div> <!--container -->
 	<div id='footer'>
-			<div class='container'></div>
+			<div class='container'>
+				<p class='text-muted credit'>Coop-Code is made by <a href="http://ejehardenberg.github.io">Ethan Eldridge</a> and <a href="http://scperkins.github.io">Sean Perkins</a></p>
+			</div>
 		</div>
 	</body>
 	<script src="http://cdn.pubnub.com/pubnub.min.js"></script>
@@ -72,9 +78,9 @@
 					 	}
 					 },
 					 { 	question_1 : "Write a function to add one from a number", 
-					 	placeholder_1 : "function add(num){}",
+					 	placeholder_1 : "function add(num){//Write code here...}",
 					 	question_2 : "Write a function to multiply a number by 4",
-					 	placeholder_2 : "function multiply(num){}", 
+					 	placeholder_2 : "function multiply(num){//Write code here...}", 
 					 	validate : function(){
 					 		var inputs = [1,2,3,4,5,6]
 					 		var outputs = []
