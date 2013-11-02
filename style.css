@@ -1,4 +1,15 @@
 html, body{
+	
+	background-color: #eeeeee;
+	height: 100%;
+	
+}
+header,section{	
+	margin: 0, auto;
+	text-align: center;
+}
+
+.jumbotron {
 	background: #ff3019; /* Old browsers */
 	background: -moz-linear-gradient(top,  #ff3019 0%, #cf0404 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff3019), color-stop(100%,#cf0404)); /* Chrome,Safari4+ */
@@ -7,8 +18,6 @@ html, body{
 	background: -ms-linear-gradient(top,  #ff3019 0%,#cf0404 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #ff3019 0%,#cf0404 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019', endColorstr='#cf0404',GradientType=0 ); /* IE6-9 */
-
-	height: 100%;
 	
 }
 
@@ -20,22 +29,6 @@ html, body{
   margin: 0 auto -60px;
   /* Pad bottom by footer height */
   padding: 0 0 60px;
-}
-
-/* footer credits*/
-.container .credit {
-  margin: 20px 0;
-}
-
-/* Set the fixed height of the footer here */
-#footer {
-  height: 60px;
-  background-color: #C7C1BF;
-}
-
-header,section{	
-	margin: 0, auto;
-	text-align: center;
 }
 
 .container {
@@ -53,4 +46,15 @@ textarea {
 
 #question_2 {
 	padding: 5px;
+}
+
+/* footer credits*/
+.container .credit {
+  margin: 20px 0;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #C7C1BF;
 }

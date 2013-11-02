@@ -8,8 +8,10 @@
 	</head>
 	<body>
 		<div id='wrap'>
-		<div class='container'>
-		<header class='page-header'>
+		
+		
+		<div class='jumbotron'>
+			<div class='container'>
 			<h1>The Cooperative Code Challenge</h1>
 			<p>
 				Veggies sunt bona vobis, proinde vos postulo esse magis spinach watercress plantain water spinach okra broccoli bok choy corn pea lentil black-eyed pea garlic.
@@ -17,8 +19,10 @@
 			<p>
 				Beetroot corn cabbage melon scallion burdock chickweed turnip groundnut fennel tigernut garlic swiss chard avocado squash mustard amaranth. Gram dandelion pea sprouts komatsuna maize amaranth bunya nuts plantain jícama water chestnut sea lettuce quandong rock melon courgette black-eyed pea kale. Broccoli rabe beet greens napa cabbage scallion fava bean chard celtuce lotus root caulie arugula beetroot bok choy zucchini kohlrabi garbanzo leek bunya nuts brussels sprout.
 			</p>
-		</header>
+			</div> <!-- jumbotron container -->
+		</div><!--jumbotron -->
 
+		<div class='container'>
 		<section>
 			<h2>The result</h2>
 			<div id="result"></div>
@@ -28,14 +32,14 @@
 			<div class='col-xs-6'>
 				<h2>Player One</h2>
 				<div id="question_1"></div>
-				<button type='button' class='btn btn-deafult'>Ready</button>
+				<button type='button' class='btn btn-deafult'>Ready?</button>
 				<textarea class='form-control' rows='4' id="input_1"></textarea>
 				<div id="errors_1"></div>
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
 				<div id="question_2"></div>
-				<button type='button' class='btn btn-default'>Ready</button>
+				<button type='button' class='btn btn-default'>Ready?</button>
 				<textarea class='form-control' rows='4' id="input_2"></textarea>
 				<div id="errors_2"></div>
 			</div>
@@ -71,9 +75,9 @@
 					 	}
 					 },
 					 { 	question_1 : "Write a function to add one from a number", 
-					 	placeholder_1 : "function add(num){}",
+					 	placeholder_1 : "function add(num){//Write code here...}",
 					 	question_2 : "Write a function to multiply a number by 4",
-					 	placeholder_2 : "function multiply(num){}", 
+					 	placeholder_2 : "function multiply(num){//Write code here...}", 
 					 	validate : function(){
 					 		var inputs = [1,2,3,4,5,6]
 					 		var outputs = []
