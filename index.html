@@ -71,15 +71,16 @@
 					 	placeholder_2_s : "function multiply(num){", 
 					 	prompt_2 : "//Write the inside of a function that has an argument of num",
 					 	placeholder_2_e : "}",
+					 	inputs : [1,2,3,4,5,6],
+					 	outputs : [],
 					 	validate : function(func1,func2){
-					 		var inputs = [1,2,3,4,5,6]
-					 		var outputs = []
-					 		for (var i = inputs.length - 1; i >= 0; i--) {
-					 			outputs.unshift( func2(func1(inputs[i])) );						 			
+					 		this.outputs = [];
+					 		for (var i = this.inputs.length - 1; i >= 0; i--) {
+					 			this.outputs.unshift( func2(func1(this.inputs[i])) );						 			
 					 		}
 					 		valid = true;
-					 		for (var i = outputs.length - 1; i >= 0; i--) {
-					 			valid = valid && outputs[i] == ((inputs[i]-1)*2);
+					 		for (var i = this.outputs.length - 1; i >= 0; i--) {
+					 			valid = valid && this.outputs[i] == ((this.inputs[i]-1)*2);
 					 		}
 					 		return valid;
 					 	}
@@ -128,9 +129,12 @@
 					var before2 = questions[question].placeholder_2_s;
 					var end1 = questions[question].placeholder_1_e;
 					var end2 = questions[question].placeholder_2_e;
+					var tryit1 = false;
+					var tryit2 = false;
 					try{
 						p1Func = new Function('num', oneAns);
 						eval(before1 +  oneAns + end1);
+						tryit1 = true;
 					}catch(err){
 						console.log(err);
 						document.getElementById('errors_1').textContent = err.message						
@@ -138,12 +142,23 @@
 					try{
 						p2Func = new Function('num',twoAns);
 						eval(before2 +  twoAns +end2);
+						tryit2 = true;
 					}catch(err){
 						console.log(err);
 						document.getElementById('errors_2').textContent = err.message						
 					}
-					var valid = questions[question].validate(p1Func,p2Func);
-					console.log(valid);
+					var valid = false;
+					if(tryit1 && tryit2){
+						valid = questions[question].validate(p1Func,p2Func);	
+					}
+					var inputs = questions[question].inputs;
+					var outputs = questions[question].outputs;
+					if(valid && tryit1 && tryit2){	
+						/* We could show expected and whatnot */
+						document.getElementById('result').textContent = 'You win';
+					}else{
+						document.getElementById('result').textContent = 'You suck';
+					}
 				}
 
 
@@ -238,7 +253,7 @@
 						message : page_message()
 					});
 					evalAnswers();
-				},10000);
+				},5000);
 
 			})();
 	</script>
