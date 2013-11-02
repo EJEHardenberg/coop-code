@@ -91,6 +91,16 @@
 						if(obj.sender == 2)
 							document.getElementById('input_2').value = obj.p2;
 					},
+					presence : function(obj){
+						pubnub.history({
+     						channel: channel,
+     						count: 1,
+     						callback: function(m){
+     							document.getElementById('input_1').value = m[0][0].p1;
+     							document.getElementById('input_2').value = m[0][0].p2;
+     						}
+ 						});
+					}
 				});
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
