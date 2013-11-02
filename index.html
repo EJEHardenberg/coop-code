@@ -58,6 +58,7 @@
 			(function(){
 				
 				var id = Math.random().toString(36).substring(7);
+				var player = 0;
 				var channel = 'colabcode';
 			
 				var pubnub = PUBNUB.init({
@@ -69,6 +70,13 @@
 	 				channel : channel,
 	 				callback : function(m){
 	 					console.log(m);
+	 					if(m.occupancy % 2 == 0){
+	 						player = 1;
+	 						document.getElementById('input_2').setAttribute('readonly','readonly');
+	 					}else{
+	 						player = 2;
+	 						document.getElementById('input_1').setAttribute('readonly','readonly');
+	 					}
 	 				}
 	 			});
 				pubnub.subscribe({
@@ -76,22 +84,24 @@
 					message : function(text){
 						console.log(text);
 					},
-					callback : function(text) { 
-						console.log(text);
-						document.getElementById('input_1').value = text.p1;
-						document.getElementById('input_2').value = text.p2;
+					callback : function(obj) { 
+						console.log(obj);
+						if(obj.sender == 1)
+							document.getElementById('input_1').value = obj.p1;
+						if(obj.sender == 2)
+							document.getElementById('input_2').value = obj.p2;
 					},
 				});
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : {sender: player ,p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 					});	
 				} );
 				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : {sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 					});	
 				} );
 			})();
