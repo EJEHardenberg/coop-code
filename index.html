@@ -56,7 +56,7 @@
 	<script src=http://cdn.pubnub.com/pubnub.min.js></script>
 		<script>
 			(function(){
-				
+
 				var id = Math.random().toString(36).substring(7);
 				var player = 0;
 				var channel = 'colabcode';
@@ -102,18 +102,30 @@
  						});
 					}
 				});
+				function page_message (){
+					return {sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+				}
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {sender: player ,p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : page_message()
 					});	
 				} );
 				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : page_message()
 					});	
 				} );
+				/* Periodically refresh boxes */
+				var refresh = setInterval(function(){
+					console.log('auto refresh');
+					pubnub.publish({
+						channel : channel,
+						message : page_message()
+					});
+				},5000);
+
 			})();
 	</script>
 
