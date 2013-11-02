@@ -53,26 +53,33 @@
 			</div>
 		</section>
 	</body>
-	<script src=http://cdn.pubnub.com/pubnub-3.1.min.js></script>
+	<script src=http://cdn.pubnub.com/pubnub.min.js></script>
 		<script>
 			(function(){
 				
-				var playerTwoText = document.getElementById('input_2');
+				var id = Math.random().toString(36).substring(7);
 				var channel = 'colabcode';
 			
 				var pubnub = PUBNUB.init({
 		     		publish_key: 'demo',
-	     			subscribe_key: 'demo'
+	     			subscribe_key: 'demo',
+	     			uuid: id
 	 			});	
+	 			pubnub.here_now({
+	 				channel : channel,
+	 				callback : function(m){
+	 					console.log(m);
+	 				}
+	 			});
 				pubnub.subscribe({
 					channel : channel,
-					message : function(stuff){
-						console.log(stuff);
+					message : function(text){
+						console.log(text);
 					},
 					callback : function(text) { 
 						console.log(text);
-						document.getElementById('input_1').innerHTML = text.p1;
-						document.getElementById('input_2').innerHTML = text.p2;
+						document.getElementById('input_1').value = text.p1;
+						document.getElementById('input_2').value = text.p2;
 					},
 				});
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
