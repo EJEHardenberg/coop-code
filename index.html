@@ -28,15 +28,17 @@
 		<section>
 			<div class='col-xs-6'>
 				<h2>Player One</h2>
-				<div id="question_1">Write a function to subtract one from a number</div>
+				<div id="question_1"></div>
 				<button type='button' class='btn btn-deafult'>Ready</button>
-				<textarea class='form-control' rows='4' placeholder='Write code here...' id="input_1"></textarea>
+				<textarea class='form-control' rows='4' id="input_1"></textarea>
+				<div id="errors_1"></div>
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
-				<div id="question_2">Write a function to multiply a number by 2</div>
+				<div id="question_2"></div>
 				<button type='button' class='btn btn-default'>Ready</button>
-				<textarea class='form-control' rows='4' placeholder='Write code here...' id="input_2"></textarea>
+				<textarea class='form-control' rows='4' id="input_2"></textarea>
+				<div id="errors_2"></div>
 			</div>
 		</section>
 		</div>
@@ -48,10 +50,55 @@
 	<script src=http://cdn.pubnub.com/pubnub.min.js></script>
 		<script>
 			(function(){
-				
+				var questions = [
+					{ 	question_1 : "Write a function to subtract one from a number", 
+					 	placeholder_1 : "function subtract(num){}",
+					 	question_2 : "Write a function to multiply a number by 2",
+					 	placeholder_2 : "function multiply(num){}", 
+					 	validate : function(){
+					 		var inputs = [1,2,3,4,5,6]
+					 		var outputs = []
+					 		for (var i = inputs.length - 1; i >= 0; i--) {
+					 			outputs.push( multiply(subtract(inputs[i])) );						 			
+					 		}
+					 		valid = true;
+					 		for (var i = outputs.length - 1; i >= 0; i--) {
+					 			valid = valid && outputs[i] == (inputs[i]-1)*2;
+					 		}
+					 		return valid;
+					 	}
+					 },
+					 { 	question_1 : "Write a function to add one from a number", 
+					 	placeholder_1 : "function add(num){}",
+					 	question_2 : "Write a function to multiply a number by 4",
+					 	placeholder_2 : "function multiply(num){}", 
+					 	validate : function(){
+					 		var inputs = [1,2,3,4,5,6]
+					 		var outputs = []
+					 		for (var i = inputs.length - 1; i >= 0; i--) {
+					 			outputs.push( multiply(add(inputs[i])) );						 			
+					 		}
+					 		valid = true;
+					 		for (var i = outputs.length - 1; i >= 0; i--) {
+					 			valid = valid && outputs[i] == (inputs[i]+1)*4;
+					 		}
+					 		return valid;
+					 	}
+					 }
+				];
+
+				function setQuestion(index){
+					console.log(questions);
+					document.getElementById('question_1').textContent = questions[index].question_1;
+					document.getElementById('question_2').textContent = questions[index].question_2;
+					document.getElementById('input_1').value = questions[index].placeholder_1;
+					document.getElementById('input_2').value = questions[index].placeholder_2;
+				}
+
 				var id = Math.random().toString(36).substring(7);
 				var player = 0;
 				var channel = 'colabcode';
+				var question = Math.floor(Math.random() * (questions.length  + 1)) ;
 			
 				var pubnub = PUBNUB.init({
 		     		publish_key: 'demo',
@@ -88,24 +135,40 @@
      						channel: channel,
      						count: 1,
      						callback: function(m){
+     							console.log(obj);
+     							/* This should only really be done if we begin game or something */
      							document.getElementById('input_1').value = m[0][0].p1;
      							document.getElementById('input_2').value = m[0][0].p2;
+     							/* Set Question */
+     							setQuestion(m[0][0].question);
      						}
  						});
 					}
 				});
+				function page_message (){
+					return {question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+				}
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {sender: player ,p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : page_message()
 					});	
 				} );
 				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
-						message : {sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+						message : page_message()
 					});	
 				} );
+				/* Periodically refresh boxes */
+				var refresh = setInterval(function(){
+					console.log('auto refresh');
+					pubnub.publish({
+						channel : channel,
+						message : page_message()
+					});
+				},10000);
+
 			})();
 	</script>
 
