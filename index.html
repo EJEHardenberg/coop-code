@@ -244,9 +244,11 @@
 									ready_2 = obj.ready_2;
 								}
 							}
-							if(obj.sync){
-								console.log("syncing question");
-								setQuestion(obj.question);
+							if(obj.uuid == id || obj.partner_ud == obj.uuid){
+								if(obj.sync){
+									console.log("syncing question");
+									setQuestion(obj.question);
+								}
 							}
 						},
 						presence : function(m){
