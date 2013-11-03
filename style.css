@@ -75,6 +75,14 @@ code.language-js #input_2_s#input_1_e {
 	padding: 5px;
 }
 
+table {
+	margin-top: 5px;
+}
+
+table td.danger {
+	color: #333;
+}
+
 /* footer credits*/
 .container .credit {
   margin: 20px 0;
