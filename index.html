@@ -14,10 +14,10 @@
 			<div class='container'>
 			<h1>The Cooperative Code Challenge</h1>
 			<p>
-				Veggies sunt bona vobis, proinde vos postulo esse magis spinach watercress plantain water spinach okra broccoli bok choy corn pea lentil black-eyed pea garlic.
+				Work Together To Solve the Questions!
 			</p>
 			<p>
-				Beetroot corn cabbage melon scallion burdock chickweed turnip groundnut fennel tigernut garlic swiss chard avocado squash mustard amaranth. Gram dandelion pea sprouts komatsuna maize amaranth bunya nuts plantain jícama water chestnut sea lettuce quandong rock melon courgette black-eyed pea kale. Broccoli rabe beet greens napa cabbage scallion fava bean chard celtuce lotus root caulie arugula beetroot bok choy zucchini kohlrabi garbanzo leek bunya nuts brussels sprout.
+				You've been paired with another programmer visiting this website. It is your job to write the function body of the given functions to solve the problems. Good Luck!
 			</p>
 			</div> <!-- jumbotron container -->
 		</div><!--jumbotron -->
@@ -37,6 +37,7 @@
 				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_1"></textarea></code></pre>
 				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_1_e"></textarea></code></pre>
 				<div id="errors_1"></div>
+				<input type="hidden" id="p1_uuid">
 			</div>
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
@@ -46,6 +47,7 @@
 				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_2"></textarea></code></pre>
 				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_2_e"></textarea></code></pre>
 				<div id="errors_2"></div>
+				<input type="hidden" id="p2_uuid">
 			</div>
 		</section>
 		</div> <!--wrap -->
@@ -136,7 +138,6 @@
 						eval(before1 +  oneAns + end1);
 						tryit1 = true;
 					}catch(err){
-						console.log(err);
 						document.getElementById('errors_1').textContent = err.message						
 					}
 					try{
@@ -144,7 +145,6 @@
 						eval(before2 +  twoAns +end2);
 						tryit2 = true;
 					}catch(err){
-						console.log(err);
 						document.getElementById('errors_2').textContent = err.message						
 					}
 					var valid = false;
@@ -173,18 +173,15 @@
 						message : obj
 					});
 				};
-				document.getElementById('ready_2').onclick = function(){
+				document.getElementById('ready_2').onclick = function(e){
 					ready_2 = true;
-					pubnub.publish({
-						channel : channel,
-						message : page_message()
-					});
 					obj = page_message();
 					obj.sync = true;
 					pubnub.publish({
 						channel : channel,
 						message : obj
 					});
+
 				};
 			
 				var pubnub = PUBNUB.init({
@@ -198,9 +195,11 @@
 	 					console.log(m);
 	 					if(m.occupancy % 2 == 0){
 	 						player = 1;
+	 						document.getElementById('p1_uuid').value = id;
 	 						document.getElementById('input_2').setAttribute('readonly','readonly');
 	 					}else{
 	 						player = 2;
+	 						document.getElementById('p2_uuid').value = id;
 	 						document.getElementById('input_1').setAttribute('readonly','readonly');
 	 					}
 	 				}
@@ -213,12 +212,16 @@
 					callback : function(obj) { 
 						console.log(obj);
 						if(obj.sender == 1){
-							document.getElementById('input_1').value = obj.p1;
-							ready_1 = obj.ready_1;
+							if(document.getElementById('p1_uuid').value = obj.uuid){
+								document.getElementById('input_1').value = obj.p1;
+								ready_1 = obj.ready_1;
+							}
 						}
 						if(obj.sender == 2){
-							document.getElementById('input_2').value = obj.p2;
-							ready_2 = obj.ready_2;
+							if(document.getElementById('p2_uuid').value = obj.uuid){
+								document.getElementById('input_2').value = obj.p2;
+								ready_2 = obj.ready_2;
+							}
 						}
 						if(obj.sync){
 							console.log("syncing question");
@@ -231,7 +234,7 @@
 					}
 				});
 				function page_message (){
-					return {ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+					return {uuid: id, ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 				}
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
