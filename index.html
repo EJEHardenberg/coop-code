@@ -95,6 +95,8 @@
 				var question = Math.floor(Math.random() * (questions.length-1)) ;
 				var ready_1 = false;
 				var ready_2 = false;
+				var hasPartner = false;
+				var partner_ud = false;
 
 				function setQuestion(q){
 					question = q;
@@ -204,37 +206,9 @@
 	 					}
 	 				}
 	 			});
-				pubnub.subscribe({
-					channel : channel,
-					message : function(text){
-						console.log(text);
-					},
-					callback : function(obj) { 
-						console.log(obj);
-						if(obj.sender == 1){
-							if(document.getElementById('p1_uuid').value = obj.uuid){
-								document.getElementById('input_1').value = obj.p1;
-								ready_1 = obj.ready_1;
-							}
-						}
-						if(obj.sender == 2){
-							if(document.getElementById('p2_uuid').value = obj.uuid){
-								document.getElementById('input_2').value = obj.p2;
-								ready_2 = obj.ready_2;
-							}
-						}
-						if(obj.sync){
-							console.log("syncing question");
-							setQuestion(obj.question);
-						}
-					},
-					presence : function(obj){
-						/* Notify Users that they have a partner here */
-
-					}
-				});
+				
 				function page_message (){
-					return {uuid: id, ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
+					return {uuid: id, partner_ud: partner_ud,ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
 				}
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
@@ -251,13 +225,56 @@
 				/* Periodically refresh boxes */
 				var refresh = setInterval(function(){
 					console.log('auto refresh');
-					pubnub.publish({
+					pubnub.subscribe({
 						channel : channel,
-						message : page_message()
+						message : function(text){
+							console.log(text);
+						},
+						callback : function(obj) { 
+							console.log(obj);
+							if(obj.sender == 1){
+								if(document.getElementById('p1_uuid').value = obj.uuid){
+									document.getElementById('input_1').value = obj.p1;
+									ready_1 = obj.ready_1;
+								}
+							}
+							if(obj.sender == 2){
+								if(document.getElementById('p2_uuid').value = obj.uuid){
+									document.getElementById('input_2').value = obj.p2;
+									ready_2 = obj.ready_2;
+								}
+							}
+							if(obj.sync){
+								console.log("syncing question");
+								setQuestion(obj.question);
+							}
+						},
+						presence : function(m){
+							console.log(m);
+							if(m.action == "join"){
+								if(!hasPartner){
+									partner_ud = m.uuid;
+									hasPartner = true;
+									if(player == 1){
+										document.getElementById('p2_uuid').value = partner_ud;
+									}else{
+										document.getElementById('p1_uuid').value = partner_ud;
+									}
+								}
+							}else{
+								if(hasPartner){
+									if(m.uuid == partner_ud){
+										hasPartner = false;
+										partner_ud = false;
+									}	
+								}
+								
+							}
+						}
 					});
 					evalAnswers();
-				},5000);
-
+				},5000);	
+				//clearInterval(refresh);
 			})();
 	</script>
 
