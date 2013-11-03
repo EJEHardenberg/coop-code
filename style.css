@@ -46,8 +46,16 @@ background-image: -webkit-gradient(
 }
 
 pre {
-	margin-top: 10px;
+	margin: 0 0 0px;
 }
+
+code.language-js #input_2_s#input_1_e {
+	margin-bottom: 20px;
+}
+
+/*pre code.language-js #input_2_e {
+	margin-bottom: 20px;
+}*/
 
 #ready_1 {
 	margin: 1.5em;
