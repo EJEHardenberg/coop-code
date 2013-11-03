@@ -5,25 +5,30 @@ html, body{
 	color: #ffffff;
 	
 }
+
+h1{
+	font-family: 'Ubuntu', sans-serif;
+}
+
 header,section{	
-	margin: 0, auto;
+	margin: 0 auto;
 	text-align: center;
 }
 
 .jumbotron {
 	background-image: linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
-background-image: -o-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
-background-image: -moz-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
-background-image: -webkit-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
-background-image: -ms-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
+	background-image: -o-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
+	background-image: -moz-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
+	background-image: -webkit-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
+	background-image: -ms-linear-gradient(bottom, rgb(75,20,105) 18%, rgb(113,53,148) 83%);
 
-background-image: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0.18, rgb(75,20,105)),
-	color-stop(0.83, rgb(113,53,148))
-);
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.18, rgb(75,20,105)),
+		color-stop(0.83, rgb(113,53,148))
+	);
 
 	
 	color: #eee;
