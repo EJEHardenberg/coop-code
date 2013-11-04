@@ -255,7 +255,7 @@
 												channel : channel,
 												message : playing()
 											});
-									},2500);
+									},10000);
 									state = 4;
 								}
 								break;
@@ -310,19 +310,19 @@
 	 			});	
 				
 				
-				// pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
-				// 	/*(e.keyCode || e.charCode) === 13 && pubnub.publish({*/
-				// 	(((e.keyCode || e.charCode) === 13) || ((e.keyCode || e.charCode) === 32)) && pubnub.publish({
-				// 		channel : channel,
-				// 		message : playing()
-				// 	});;	
-				// } );
-				// pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
-				// 	(((e.keyCode || e.charCode) === 13) || ((e.keyCode || e.charCode) === 32)) && pubnub.publish({
-				// 		channel : channel,
-				// 		message : playing()
-				// 	});;	
-				// } );
+				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
+					/*(e.keyCode || e.charCode) === 13 && pubnub.publish({*/
+					(((e.keyCode || e.charCode) === 13) || 	((e.keyCode || e.charCode) === 32) | ((e.keyCode || e.charCode) === 186)) && pubnub.publish({
+						channel : channel,
+						message : playing()
+					});;	
+				} );
+				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
+					(((e.keyCode || e.charCode) === 13) || ((e.keyCode || e.charCode) === 32) | ((e.keyCode || e.charCode) === 186)) && pubnub.publish({
+						channel : channel,
+						message : playing()
+					});;	
+				} );
 				
 
 			})();
