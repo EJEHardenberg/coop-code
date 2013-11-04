@@ -27,6 +27,7 @@
 			<p>
 				You've been paired with another programmer visiting this website. It is your job to write the function body of the given functions to solve the problems. Good Luck!
 			</p>
+			<button id="find_partner" type='button' class='btn btn-primary'>Find a Partner</button>
 			<div id="result"></div>
 		</section>
 		
@@ -34,7 +35,6 @@
 			<div class='col-xs-6'>
 				<h2>Player One</h2>
 				<div id="question_1"></div>
-				<button id="ready_1" type='button' class='btn btn-primary'>Ready!</button>
 				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_1_s"></textarea></code></pre>
 				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_1"></textarea></code></pre>
 				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_1_e"></textarea></code></pre>
@@ -44,7 +44,6 @@
 			<div class='col-xs-6'>
 				<h2>Player Two</h2>
 				<div id="question_2"></div>
-				<button id="ready_2" type='button' class='btn btn-primary'>Ready!</button>
 				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_2_s"></textarea></code></pre>
 				<pre><code class="language-js"><textarea class='language-js form-control' rows='4' id="input_2"></textarea></code></pre>
 				<pre><code class="language-js"><textarea readonly class='language-js form-control' rows='1' id="input_2_e"></textarea></code></pre>
@@ -92,13 +91,14 @@
 				];
 
 				var id = Math.random().toString(36).substring(7);
-				var player = 0;
+				var player = 1;
 				var channel = 'colabcode';
 				var question = Math.floor(Math.random() * (questions.length-1)) ;
-				var ready_1 = false;
-				var ready_2 = false;
-				var hasPartner = false;
 				var partner_ud = false;
+				var synced = false;
+				var matching; /* Will be interval id of the match finding function */
+				var refresh;
+				var state = 0;
 
 				function setQuestion(q){
 					question = q;
@@ -110,20 +110,6 @@
 					document.getElementById('input_2').value = questions[question].prompt_2;
 					document.getElementById('input_1_e').value = questions[question].placeholder_1_e;
 					document.getElementById('input_2_e').value = questions[question].placeholder_2_e;
-				}
-
-				window.getFunctionFromString = function(string)
-				{
-				    var scope = window;
-				    var scopeSplit = string.split('.');
-				    for (i = 0; i < scopeSplit.length - 1; i++)
-				    {
-				        scope = scope[scopeSplit[i]];
-
-				        if (scope == undefined) return;
-				    }
-
-				    return scope[scopeSplit[scopeSplit.length - 1]];
 				}
 
 				function evalAnswers(){
@@ -159,33 +145,155 @@
 					var outputs = questions[question].outputs;
 					if(valid && tryit1 && tryit2){	
 						/* We could show expected and whatnot */
-						document.getElementById('result').textContent = 'You win';
+						document.getElementById('result').textContent = 'Your code passed validation!';
 					}else{
-						document.getElementById('result').textContent = 'You suck';
+						document.getElementById('result').textContent = 'Keep trying!';
 					}
 				}
 
+				function broadcast(){
+					console.log('Sending Broadcast From ' + id );
+					return {from: id, to: 'ALL'};
+				}
+
+				function partnerRequest(oid){
+					console.log('Partner request ' + id + ' -> ' + oid);
+					return {from: id, to: oid}
+				}
+
+				function syncToPartner(oid){
+					console.log('Partner sync ' + id + ' -> ' + oid);
+					return {from: id, to: oid, sync: true};
+				}
+
+				function playerSelect(oid){
+					console.log('requesting to be player 1');
+					return {from: id, to: oid, sync: true, player: 1, question : question};
+				}
+
+				function playing(oid){
+					return {from: id, to: partner_ud, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value,is_playing : true};
+				}
+
+				function update_and_eval(msg){
+					if(msg.sender == 1){
+						if(document.getElementById('p1_uuid').value == msg.from){
+							document.getElementById('input_1').value = msg.p1;
+							}
+						}
+					if(msg.sender == 2){
+						if(document.getElementById('p2_uuid').value == msg.from){
+							document.getElementById('input_2').value = msg.p2;
+						}
+					}
+					evalAnswers();
+				}
+
+				function set_players(msg){
+					if(msg.player == 1){
+						player = 2;
+						document.getElementById('p2_uuid').value = id;
+						document.getElementById('p1_uuid').value = msg.from;
+						document.getElementById('input_1').value = partner_ud;
+						document.getElementById('input_1').setAttribute('readonly','readonly');
+					} else {
+						player = 1;
+						document.getElementById('p1_uuid').value = id;
+						document.getElementById('p2_uuid').value = msg.from;
+						document.getElementById('input_2').value = partner_ud;
+						document.getElementById('input_2').setAttribute('readonly','readonly');
+					}
+				}
+
+				function change_state(msg){
+					if(msg.to == id || msg.to == 'ALL'){
+						console.log(msg);
+						switch(state){
+							case 0:
+								if(msg.to == 'ALL' && msg.from != id){
+									/* Make a partner request transition to next state */
+									state = 1;
+									pubnub.publish({
+										channel : channel,
+										message : partnerRequest(msg.from)
+									});
+									partner_ud = msg.from;
+								}
+								break;
+							case 1:
+								if(partner_ud == msg.from){
+									pubnub.publish({
+										channel : channel,
+										message : syncToPartner(msg.from)
+									});
+									state = 2;	
+								}
+								break;
+							case 2:
+								if(partner_ud == msg.from){
+									pubnub.publish({
+										channel : channel,
+										message : playerSelect(msg.from)
+									});
+									state = 3;
+								}
+								break;
+							case 3:
+								if(partner_ud == msg.from){
+									set_players(msg);
+									setQuestion(msg.question);
+									clearInterval(matching);
+									refresh = setInterval(function(){
+										pubnub.publish({
+											channel : channel,
+											message : playing(msg.from)
+										});
+									},5000);
+									state = 4;
+								}
+								break;
+							case 4:
+								if(partner_ud == msg.from){
+									update_and_eval(msg);
+								}
+								break;
+						}
+					}
+				}
+					
+				function reset(){
+					partner_ud = false;
+					player = 0;
+					state = 0;
+				}
 
 
-
-				document.getElementById('ready_1').onclick = function(){
-					ready_1 = true;
-					obj = page_message();
-					obj.sync = true;
-					pubnub.publish({
+				document.getElementById('find_partner').onclick = function(){
+					pubnub.subscribe({
 						channel : channel,
-						message : obj
+						message : change_state,
+						presence : function(m){
+									console.log(m);
+									if(m.action != "join"){
+										if(m.uuid == partner_ud){
+											console.log('partner left');
+											reset();								
+										}	
+									}					
+								}
 					});
-				};
-				document.getElementById('ready_2').onclick = function(e){
-					ready_2 = true;
-					obj = page_message();
-					obj.sync = true;
-					pubnub.publish({
-						channel : channel,
-						message : obj
-					});
-
+					reset();
+					if(refresh){
+						clearInterval(refresh);
+					}
+					clearInterval(matching);
+					matching = setInterval(function(){
+						/* Broadcast away */
+						pubnub.publish({
+							channel : channel,
+							message : broadcast()
+						});				
+					},5000);	
 				};
 			
 				var pubnub = PUBNUB.init({
@@ -193,25 +301,8 @@
 	     			subscribe_key: 'demo',
 	     			uuid: id
 	 			});	
-	 			pubnub.here_now({
-	 				channel : channel,
-	 				callback : function(m){
-	 					console.log(m);
-	 					if(m.occupancy % 2 == 0){
-	 						player = 1;
-	 						document.getElementById('p1_uuid').value = id;
-	 						document.getElementById('input_2').setAttribute('readonly','readonly');
-	 					}else{
-	 						player = 2;
-	 						document.getElementById('p2_uuid').value = id;
-	 						document.getElementById('input_1').setAttribute('readonly','readonly');
-	 					}
-	 				}
-	 			});
 				
-				function page_message (){
-					return {uuid: id, partner_ud: partner_ud,ready_1 : ready_1, ready_2 : ready_2, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value}
-				}
+				/*
 				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
 					(e.keyCode || e.charCode) === 13 && pubnub.publish({
 						channel : channel, 
@@ -224,61 +315,8 @@
 						message : page_message()
 					});	
 				} );
-				/* Periodically refresh boxes */
-				var refresh = setInterval(function(){
-					console.log('auto refresh');
-					pubnub.subscribe({
-						channel : channel,
-						message : function(text){
-							console.log(text);
-						},
-						callback : function(obj) { 
-							console.log(obj);
-							if(obj.sender == 1){
-								if(document.getElementById('p1_uuid').value = obj.uuid){
-									document.getElementById('input_1').value = obj.p1;
-									ready_1 = obj.ready_1;
-								}
-							}
-							if(obj.sender == 2){
-								if(document.getElementById('p2_uuid').value = obj.uuid){
-									document.getElementById('input_2').value = obj.p2;
-									ready_2 = obj.ready_2;
-								}
-							}
-							if(obj.uuid == id || obj.partner_ud == obj.uuid){
-								if(obj.sync){
-									console.log("syncing question");
-									setQuestion(obj.question);
-								}
-							}
-						},
-						presence : function(m){
-							console.log(m);
-							if(m.action == "join"){
-								if(!hasPartner){
-									partner_ud = m.uuid;
-									hasPartner = true;
-									if(player == 1){
-										document.getElementById('p2_uuid').value = partner_ud;
-									}else{
-										document.getElementById('p1_uuid').value = partner_ud;
-									}
-								}
-							}else{
-								if(hasPartner){
-									if(m.uuid == partner_ud){
-										hasPartner = false;
-										partner_ud = false;
-									}	
-								}
-								
-							}
-						}
-					});
-					evalAnswers();
-				},5000);	
-				//clearInterval(refresh);
+				*/
+
 			})();
 	</script>
 
