@@ -29,6 +29,11 @@
 			</p>
 			<button id="find_partner" type='button' class='btn btn-primary'>Find a Partner</button>
 			<div id="result"></div>
+			<table>
+				<thead><tr><th>Expected</th><th>Calculated</th></tr></thead>
+				<tbody id="expectations">
+				</tbody>
+			</table>
 		</section>
 		
 		<section>
@@ -82,8 +87,23 @@
 					 			this.outputs.unshift( func2(func1(this.inputs[i])) );						 			
 					 		}
 					 		valid = true;
+					 		var table = document.getElementById('expectations');
+					 		table.innerHTML = '';
 					 		for (var i = this.outputs.length - 1; i >= 0; i--) {
+					 			var row = document.createElement('tr');
+					 			var expected = document.createElement('td');
+					 			var outcome = document.createElement('td');
+					 			expected.appendChild(document.createTextNode(((this.inputs[i]-1)*2)));
+					 			outcome.appendChild(document.createTextNode(this.outputs[i]));
+					 			row.appendChild(expected);
+					 			row.appendChild(outcome);
 					 			valid = valid && this.outputs[i] == ((this.inputs[i]-1)*2);
+					 			if(this.outputs[i] == ((this.inputs[i]-1)*2))
+					 				row.className = "correct";
+					 			else
+					 				row.className = "incorrect";
+					 			table.appendChild(row);
+					 			
 					 		}
 					 		return valid;
 					 	}
@@ -257,6 +277,7 @@
 											});
 									},10000);
 									state = 4;
+									document.getElementById('find_partner').style.visibility = 'hidden';
 								}
 								break;
 							case 4:
@@ -272,6 +293,7 @@
 					partner_ud = false;
 					player = 0;
 					state = 0;
+					document.getElementById('find_partner').style.visibility = 'visible';
 				}
 
 
