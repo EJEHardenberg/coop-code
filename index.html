@@ -125,18 +125,25 @@
 					var tryit2 = false;
 					try{
 						p1Func = new Function('num', oneAns);
+						p1Func();
 						eval(before1 +  oneAns + end1);
+
 						tryit1 = true;
+						document.getElementById('errors_1').textContent = 'No Syntax Errors';
 					}catch(err){
-						document.getElementById('errors_1').textContent = err.message						
+						document.getElementById('errors_1').textContent = err.message;						
 					}
+					
 					try{
 						p2Func = new Function('num',twoAns);
-						eval(before2 +  twoAns +end2);
+						p2Func();
+						eval(before2 +  twoAns + end2);
 						tryit2 = true;
+						document.getElementById('errors_2').textContent = 'No Syntax Errors';
 					}catch(err){
-						document.getElementById('errors_2').textContent = err.message						
+						document.getElementById('errors_2').textContent = err.message;					
 					}
+
 					var valid = false;
 					if(tryit1 && tryit2){
 						valid = questions[question].validate(p1Func,p2Func);	
@@ -171,7 +178,7 @@
 					return {from: id, to: oid, sync: true, player: 1, question : question};
 				}
 
-				function playing(oid){
+				function playing(){
 					return {from: id, to: partner_ud, question : question, sender: player, p1 : document.getElementById('input_1').value, p2 : document.getElementById('input_2').value,is_playing : true};
 				}
 
@@ -186,7 +193,7 @@
 							document.getElementById('input_2').value = msg.p2;
 						}
 					}
-					evalAnswers();
+					evalAnswers();	
 				}
 
 				function set_players(msg){
@@ -244,11 +251,11 @@
 									setQuestion(msg.question);
 									clearInterval(matching);
 									refresh = setInterval(function(){
-										pubnub.publish({
-											channel : channel,
-											message : playing(msg.from)
-										});
-									},5000);
+											pubnub.publish({
+												channel : channel,
+												message : playing()
+											});
+									},2500);
 									state = 4;
 								}
 								break;
@@ -302,20 +309,21 @@
 	     			uuid: id
 	 			});	
 				
-				/*
-				pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
-					(e.keyCode || e.charCode) === 13 && pubnub.publish({
-						channel : channel, 
-						message : page_message()
-					});	
-				} );
-				pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
-					(e.keyCode || e.charCode) === 13 && pubnub.publish({
-						channel : channel, 
-						message : page_message()
-					});	
-				} );
-				*/
+				
+				// pubnub.bind( 'keyup', document.getElementById('input_1'), function(e) {
+				// 	/*(e.keyCode || e.charCode) === 13 && pubnub.publish({*/
+				// 	(((e.keyCode || e.charCode) === 13) || ((e.keyCode || e.charCode) === 32)) && pubnub.publish({
+				// 		channel : channel,
+				// 		message : playing()
+				// 	});;	
+				// } );
+				// pubnub.bind( 'keyup', document.getElementById('input_2'), function(e) {
+				// 	(((e.keyCode || e.charCode) === 13) || ((e.keyCode || e.charCode) === 32)) && pubnub.publish({
+				// 		channel : channel,
+				// 		message : playing()
+				// 	});;	
+				// } );
+				
 
 			})();
 	</script>
