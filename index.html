@@ -28,6 +28,7 @@
 				You've been paired with another programmer visiting this website. It is your job to write the function body of the given functions to solve the problems. Good Luck!
 			</p>
 			<button id="find_partner" type='button' class='btn btn-primary'>Find a Partner</button>
+			<span id="sync_progress"></span>
 			<div id="result"></div>
 			<table>
 				<thead><tr><th>Expected</th><th>Calculated</th></tr></thead>
@@ -179,22 +180,22 @@
 				}
 
 				function broadcast(){
-					console.log('Sending Broadcast From ' + id );
+					document.getElementById('sync_progress').textContent = 'Sending Broadcast From ' + id ;
 					return {from: id, to: 'ALL'};
 				}
 
 				function partnerRequest(oid){
-					console.log('Partner request ' + id + ' -> ' + oid);
+					document.getElementById('sync_progress').textContent = 'Partner request ' + id + ' -> ' + oid;
 					return {from: id, to: oid}
 				}
 
 				function syncToPartner(oid){
-					console.log('Partner sync ' + id + ' -> ' + oid);
+					document.getElementById('sync_progress').textContent = 'Partner sync ' + id + ' -> ' + oid;
 					return {from: id, to: oid, sync: true};
 				}
 
 				function playerSelect(oid){
-					console.log('requesting to be player 1');
+					document.getElementById('sync_progress').textContent = 'requesting to be player 1';
 					return {from: id, to: oid, sync: true, player: 1, question : question};
 				}
 
@@ -213,6 +214,7 @@
 							document.getElementById('input_2').value = msg.p2;
 						}
 					}
+					document.getElementById('sync_progress').textContent = 'Evaluating code';
 					evalAnswers();	
 				}
 
@@ -224,12 +226,14 @@
 						document.getElementById('input_1').value = partner_ud;
 						document.getElementById('input_1').setAttribute('readonly','readonly');
 					} else {
+
 						player = 1;
 						document.getElementById('p1_uuid').value = id;
 						document.getElementById('p2_uuid').value = msg.from;
 						document.getElementById('input_2').value = partner_ud;
 						document.getElementById('input_2').setAttribute('readonly','readonly');
 					}
+					document.getElementById('sync_progress').textContent = 'You are Player ' + player;
 				}
 
 				function change_state(msg){
@@ -293,6 +297,7 @@
 					partner_ud = false;
 					player = 0;
 					state = 0;
+					document.getElementById('sync_progress').textContent = '';
 					document.getElementById('find_partner').style.visibility = 'visible';
 				}
 
@@ -305,7 +310,7 @@
 									console.log(m);
 									if(m.action != "join"){
 										if(m.uuid == partner_ud){
-											console.log('partner left');
+											document.getElementById('sync_progress').textContent = 'partner left';
 											reset();								
 										}	
 									}					
