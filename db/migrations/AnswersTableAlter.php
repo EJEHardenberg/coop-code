@@ -6,9 +6,6 @@ if( ! isset($migrations) )
 if( ! isset($connection) )
 	die("Connection to mysql database must already be established by migrate.php's scope");
 
-/**
-* 
-*/
 class AnswersTableAlter extends Migration {
 	function __construct($name, $ran = false, $connection) {
 		$this->name = $name;

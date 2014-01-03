@@ -47,8 +47,12 @@ $migrationsFolder = dirname(__FILE__) . '/migrations';
 
 if($handle = opendir($migrationsFolder)) {
 	while( false !== ($file = readdir($handle) ) )
-		if($file != "." && $file != "..")
-			$files[filemtime($migrationsFolder . "/" . $file)] = $file;
+		if($file != "." && $file != ".."){
+			$time =filemtime($migrationsFolder . "/" . $file); 
+			while(array_key_exists($time, $files))
+				$time = $time + 1; //Not the best strat, but a strat
+			$files[$time] = $file;		
+		}
 	ksort($files);
 
 	require_once "Migration.php";
@@ -67,7 +71,7 @@ if($handle = opendir($migrationsFolder)) {
 						if( ! $migration->migrate() )
 							echo "Failed To Migrate: " . $migration->getName();
 					}catch(Exception $e){
-						echo "Failed To Migrate: " . . $migration->getName() .' ' . $e->getMessage();
+						echo "Failed To Migrate: " . $migration->getName() .' ' . $e->getMessage();
 					}
 				}
 				else
@@ -75,7 +79,7 @@ if($handle = opendir($migrationsFolder)) {
 						if( ! $migration->revert() )
 							echo "Failed To Revert: " . $migration->getName();
 					}catch(Exception $e){
-						echo "Failed To Revert: " . . $migration->getName() .' ' . $e->getMessage();
+						echo "Failed To Revert: " . $migration->getName() .' ' . $e->getMessage();
 					}
 			}
 			unset($_POST);
