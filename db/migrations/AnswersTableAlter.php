@@ -9,7 +9,7 @@ if( ! isset($connection) )
 /**
 * 
 */
-class AnswersTable extends Migration {
+class AnswersTableAlter extends Migration {
 	function __construct($name, $ran = false, $connection) {
 		$this->name = $name;
 		$this->ran = $ran;
@@ -18,13 +18,9 @@ class AnswersTable extends Migration {
 
 	protected function up(){
 		$res = mysql_query(
-			"CREATE TABLE answers (
-        		id INT(20) NOT NULL auto_increment PRIMARY KEY,
-        		qid INT(20), 
-        		answers VARCHAR(512), -- store php var_export or serialized arrays?
-        		INDEX question_fk (qid),
-        		FOREIGN KEY answers(qid) REFERENCES questions(id) ON DELETE CASCADE
-    		) ENGINE InnoDB;", $this->connection
+			"ALTER TABLE answers 
+			ADD COLUMN inputs VARCHAR(512) -- serialized arrays go here
+			;", $this->connection
 		);
 		if(false === $res)
 			die("Failed to migrate " . $this->name . " " . mysql_error());
@@ -32,7 +28,7 @@ class AnswersTable extends Migration {
 	}
 
 	protected function down(){
-		$res = mysql_query("DROP TABLE answers;	");
+		$res = mysql_query("ALTER TABLE answers DROP COLUMN inputs;");
 		if(false === $res)
 			die("Failed to revert migration " . $this->name . mysql_error());
 		return $res;
@@ -40,8 +36,8 @@ class AnswersTable extends Migration {
 }
 
 
-$mName = "Create table for answers";
-$m = new AnswersTable($mName, Migration::isRan($mName, $connection), $connection);
+$mName = "Add inputs field to answers";
+$m = new AnswersTableAlter($mName, Migration::isRan($mName, $connection), $connection);
 $migrations[] = $m;
 
 ?>
