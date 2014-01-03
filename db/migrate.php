@@ -48,12 +48,13 @@ $migrationsFolder = dirname(__FILE__) . '/migrations';
 if($handle = opendir($migrationsFolder)) {
 	while( false !== ($file = readdir($handle) ) )
 		if($file != "." && $file != ".."){
-			$time =filemtime($migrationsFolder . "/" . $file); 
+			$time =filectime($migrationsFolder . "/" . $file); 
 			while(array_key_exists($time, $files))
 				$time = $time + 1; //Not the best strat, but a strat
 			$files[$time] = $file;		
 		}
 	ksort($files);
+	closedir($handle);
 
 	require_once "Migration.php";
 	foreach ($files as $file) {
