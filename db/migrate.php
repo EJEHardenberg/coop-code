@@ -106,8 +106,7 @@ if($handle = opendir($migrationsFolder)) {
 		<h1>Migration Management</h1>
 		<p>
 			Make sure to have setup the Initial Database User and created
-			the database itself via the SQL defined in the DataSchema Wiki
-			page!
+			the database itself via the SQL defined at the top of this file
 		</p>
 		<p>
 			Migration Information Pulled from:
