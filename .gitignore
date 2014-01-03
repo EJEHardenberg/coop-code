@@ -1,2 +1,3 @@
 #Ignore bundle created by git bundle create ./bundle --all
 bundle
+*.log
