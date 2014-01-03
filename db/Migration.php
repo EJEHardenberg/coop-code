@@ -55,6 +55,7 @@ abstract class Migration {
 	}
 
 	public static function isRan($name, $connection) {
+		$name = mysql_escape_string($name);
 		$res = mysql_query("SELECT ran FROM migrations WHERE name=\"$name\"", $connection);
 		if($res === false)
 			die("Query for migration's ran failed");
