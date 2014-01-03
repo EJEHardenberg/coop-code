@@ -11,10 +11,7 @@ Run the SQL below if neccesary:
 create database coop; 
 create user 'coop'@'localhost' identified by 'coop'; grant all on coop.* to 'coop'@'localhost' ; flush privileges;
 */
-define("DB_USER", "coop");
-define("DB_HOST", "localhost");
-define("DB_PASS", "coop");
-define("DB_NAME", "coop");
+require_once 'config.php';
 
 $migrations = array(); 
 $files = array();
@@ -66,12 +63,20 @@ if($handle = opendir($migrationsFolder)) {
 			$to_migrate = array_values($_POST['migrations']);
 			foreach ($migrations as $migration) {
 				if( in_array($migration->getName(), $to_migrate)  ){
-					if( ! $migration->migrate() )
-						echo "Failed To Migrate: " . $migration->getName();
+					try{
+						if( ! $migration->migrate() )
+							echo "Failed To Migrate: " . $migration->getName();
+					}catch(Exception $e){
+						echo "Failed To Migrate: " . . $migration->getName() .' ' . $e->getMessage();
+					}
 				}
 				else
-					if( ! $migration->revert() )
-						echo "Failed To Revert: " . $migration->getName();
+					try{
+						if( ! $migration->revert() )
+							echo "Failed To Revert: " . $migration->getName();
+					}catch(Exception $e){
+						echo "Failed To Revert: " . . $migration->getName() .' ' . $e->getMessage();
+					}
 			}
 			unset($_POST);
 			header('Location: '.$_SERVER['REQUEST_URI']);
