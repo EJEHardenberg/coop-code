@@ -30,6 +30,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 	}
 	$data->total = mysql_num_rows($res);
 	echo json_encode($data);
+	mysql_close($connection);
 	exit();
 
 }
