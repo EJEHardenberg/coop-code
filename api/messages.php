@@ -32,11 +32,18 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 		die("Database does not exist");
 	}
 
-	$res = mysql_query("SELECT sender, msg FROM messages WHERE `to` ='". mysql_real_escape_string($to_name) ."' ");
+	$res = mysql_query("SELECT sender, msg FROM messages WHERE `to` ='". mysql_real_escape_string($to_name) ."' OR `to`='ALL' ");
 	if( mysql_num_rows($res) == 0 ){
 		$data->messages = array();
 	}else{
-		$data->messages = mysql_fetch_array($res);
+		$data->messages = array(); 
+
+		while ($row = mysql_fetch_assoc($res) ){
+			$obj = new stdClass();
+			$obj->sender = $row['sender'];
+			$obj->msg = $row['msg'];
+			$data->messages[] = $obj;
+		}
 	}
 	$data->total = mysql_num_rows($res);
 
